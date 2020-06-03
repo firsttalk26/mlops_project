@@ -3,33 +3,93 @@ from keras.layers import MaxPooling2D
 from keras.layers import Flatten
 from keras.layers import Dense
 from keras.models import Sequential
+from keras import metrics
+import random
+
+
+
+def model1():
+  model.add(Convolution2D(filters=random.randint(30,40), 
+                        kernel_size=random.choice((3,3),(4,4),(5,5)), 
+                        activation='relu',
+                   input_shape=(64, 64, 3)
+                       ))
+  model.add(MaxPooling2D(pool_size=(2, 2)))
+  model.add(Flatten())
+  model.add(Dense(units=random.randint(100,200), activation='relu'))
+  model.add(Dense(units=1, activation='sigmoid'))
+
+
+
+
+def model2():
+        model.add(Convolution2D(filters=random.randint(30,40), 
+                        kernel_size=random.choice((3,3),(4,4),(5,5)), 
+                        activation='relu',
+                   input_shape=(64, 64, 3)
+                       ))
+        model.add(MaxPooling2D(pool_size=(2,2)))
+        model.add(Convolution2D(filters=random.randint(30,40), 
+                        kernel_size=random.choice((3,3),(4,4)(5,5)), 
+                        activation='relu',
+                   input_shape=(64, 64, 3)
+                       ))
+        model.add(MaxPooling2D(pool_size=(2,2)))
+        model.add(Flatten())
+        model.add(Dense(units=random.randint(100,200),activation='relu'))
+        model.add(Dense(units=random.randint(50,100),activation='relu'))
+        model.add(Dense(units=1,activation='sigmoid'))
+
+
+
+
+
+def model3():
+        model.add(Convolution2D(filters=random.randint(30,40), 
+                        kernel_size=random.choice((3,3),(4,4),(5,5)), 
+                        activation='relu',
+                   input_shape=(64, 64, 3)
+                       ))
+        model.add(MaxPooling2D(pool_size=(2,2)))
+        model.add(Convolution2D(filters=random.randint(30,40), 
+                        kernel_size=random.choice((3,3),(4,4),(5,5)), 
+                        activation='relu',
+                   input_shape=(64, 64, 3)
+                       ))
+        model.add(MaxPooling2D(pool_size=(2,2)))
+        model.add(Convolution2D(filters=random.randint(30,40), 
+                        kernel_size=random.choice((3,3),(4,4),(5,5)), 
+                        activation='relu',
+                   input_shape=(64, 64, 3)
+                       ))
+        model.add(MaxPooling2D(pool_size=(2,2)))
+        model.add(Flatten())
+        model.add(Dense(units=random.randint(100,200),activation='relu'))
+        model.add(Dense(units=random.randint(50,100),activation='relu'))
+        model.add(Dense(units=random.randint(20,45),activation='relu'))
+        model.add(Dense(units=1,activation='sigmoid'))
+
+
 
 
 
 
 model = Sequential()
-model.add(Convolution2D(filters=32, 
-                        kernel_size=(3,3), 
-                        activation='relu',
-                   input_shape=(64, 64, 3)
-                       ))
+
+x=random.randint(1,3)
+
+
+if x==1:
+        model.add(model1())
+elif x==2:
+        model.add(model2())
+else:
+        model.add(model3())
 
 
 
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Convolution2D(filters=32, 
-                        kernel_size=(3,3), 
-                        activation='relu',
-                       ))
-                
-                
-model.add(MaxPooling2D(pool_size=(2, 2)))
 
-model.add(Flatten())
-
-model.add(Dense(units=128, activation='relu'))
-model.add(Dense(units=1, activation='sigmoid'))
-
+ 
 model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
 
@@ -51,7 +111,7 @@ test_set = test_datagen.flow_from_directory(
         target_size=(64, 64),
         batch_size=32,
         class_mode='binary')
-model.fit(
+model_history=model.fit(
         training_set,
         steps_per_epoch=800,
         epochs=5,
@@ -59,24 +119,17 @@ model.fit(
         validation_steps=80)
 
 
-model.save('my-cnn.h5')
 
-from keras.models import load_model
 
-m = load_model('my-cnn.h5')
-from keras.preprocessing import image
-test_image = image.load_img('cnn_dataset/single_prediction/cat_or_dog_2.jpg', 
-               target_size=(64,64))
+print(max(model_history.history['val_accuracy']))
+if (max(model_history.history['val_accuracy'])) > 0.80 :
+    model.save('model.h5')
 
-test_image = image.img_to_array(test_image)
-import numpy as np 
-test_image = np.expand_dims(test_image, axis=0)
-result = m.predict(test_image)
 
-if result[0][0] == 1.0:
-    print('dog')
-else:
-    print('cat')
+
+accuracy_file = open('/root/Task3/accuracy.txt','w+')
+accuracy_file.write (str(model_history.history['val_accuracy']))
+accuracy_file.close()
 
 
                    
